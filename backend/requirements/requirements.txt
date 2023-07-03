@@ -55,6 +55,8 @@ packaging==23.0
     #   -r requirements.in
     #   build
     #   pytest
+pillow==10.0.0
+    # via -r requirements.in
 pip-tools==6.14.0
     # via -r requirements.in
 pluggy==0.13.1
