@@ -33,8 +33,8 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
         constraints = [
             models.UniqueConstraint(
                 fields=['username', 'email'],
@@ -59,8 +59,8 @@ class Follow(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Подписки'
-        verbose_name_plural = 'Подписки'
+        verbose_name = 'подписки'
+        verbose_name_plural = 'подписки'
         constraints = [
             UniqueConstraint(
                 fields=['user', 'following'],
