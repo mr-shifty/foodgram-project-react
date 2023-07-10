@@ -7,15 +7,12 @@ from users.models import User, Follow
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = (
-        'id',
-        'username',
-        'email',
-        'first_name',
-        'last_name',
+        'username', 'email',
+        'first_name', 'last_name', 'id',
     )
     list_filter = ('email', 'first_name')
 
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'following',)
+    list_display = ('user', 'author',)

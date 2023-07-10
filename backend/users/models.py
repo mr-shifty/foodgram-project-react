@@ -25,12 +25,6 @@ class User(AbstractUser):
         max_length=150,
     )
 
-    password = models.CharField(
-        'Пароль',
-        max_length=150,
-        null=True
-    )
-
     class Meta:
         ordering = ('id',)
         verbose_name = 'пользователь'
@@ -50,12 +44,14 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower"
+        related_name="follower",
+        verbose_name="подписчик"
     )
-    following = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following"
+        related_name="following",
+        verbose_name='автор'
     )
 
     class Meta:
@@ -63,11 +59,11 @@ class Follow(models.Model):
         verbose_name_plural = 'подписки'
         constraints = [
             UniqueConstraint(
-                fields=['user', 'following'],
-                name='uq_user_following'
+                fields=['user', 'author'],
+                name='uq_user_author'
             ),
             CheckConstraint(
-                check=~models.Q(user=models.F('following')),
+                check=~models.Q(user=models.F('author')),
                 name='prevent_self_follow',
             )
         ]
