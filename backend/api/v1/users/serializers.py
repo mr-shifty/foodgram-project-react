@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework.fields import SerializerMethodField
 from rest_framework.exceptions import ValidationError
-from rest_framework import serializers, status
+from rest_framework import status
 
 from rest_framework import serializers
 
