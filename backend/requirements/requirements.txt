@@ -82,6 +82,8 @@ filetype==1.2.0
     # via
     #   -r requirements.in
     #   drf-extra-fields
+gunicorn==20.1.0
+    # via -r requirements.in
 idna==3.4
     # via
     #   -r requirements.in
@@ -122,7 +124,7 @@ pluggy==0.13.1
     # via
     #   -r requirements.in
     #   pytest
-psycopg2==2.9.6
+psycopg2-binary==2.9.3
     # via -r requirements.in
 py==1.11.0
     # via
