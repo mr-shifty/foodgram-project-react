@@ -13,6 +13,8 @@ attrs==22.2.0
     # via
     #   -r requirements.in
     #   pytest
+bcrypt==4.0.1
+    # via -r requirements.in
 build==0.10.0
     # via
     #   -r requirements.in
@@ -56,6 +58,7 @@ django==3.2
     #   django-filter
     #   djangorestframework
     #   djangorestframework-simplejwt
+    #   drf-extra-fields
 django-filter==23.1
     # via -r requirements.in
 django-templated-mail==1.1.1
@@ -66,12 +69,19 @@ djangorestframework==3.12.4
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
+    #   drf-extra-fields
 djangorestframework-simplejwt==4.7.2
     # via
     #   -r requirements.in
     #   djoser
 djoser==2.1.0
     # via -r requirements.in
+drf-extra-fields==3.5.0
+    # via -r requirements.in
+filetype==1.2.0
+    # via
+    #   -r requirements.in
+    #   drf-extra-fields
 idna==3.4
     # via
     #   -r requirements.in
