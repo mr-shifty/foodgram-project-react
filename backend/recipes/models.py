@@ -5,7 +5,7 @@ from django.db.models import CheckConstraint, UniqueConstraint
 from users.models import User
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(
         "название ингредиента",
         max_length=100,
@@ -45,13 +45,13 @@ class Recipe(models.Model):
         verbose_name="описание"
     )
     ingredients = models.ManyToManyField(
-        Ingredients,
+        Ingredient,
         through='RecipeIngredient',
         related_name='recipes',
         verbose_name="ингредиенты"
     )
     tags = models.ManyToManyField(
-        "Tags",
+        "Tag",
         related_name="recipes",
         verbose_name="теги"
     )
@@ -75,34 +75,34 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredient_list',
+        related_name='recipe_ingredients',
         verbose_name='рецепт'
     )
     ingredients = models.ForeignKey(
-        Ingredients,
+        Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredienttorecipe',
+        related_name='recipe_ingredients',
         verbose_name='ингредиент'
     )
     amount = models.PositiveSmallIntegerField(
         'количество',
         validators=[
-            MinValueValidator(1, 'Минимальное количество 1')
+            MinValueValidator(1, message='Минимальное количество 1')
         ]
     )
 
     class Meta:
-        verbose_name = "Ингредиент в рецепте",
-        verbose_name_plural = "Ингредиенты в рецептах"
+        verbose_name = "ингредиент в рецепте"
+        verbose_name_plural = "ингредиенты в рецептах"
 
     def __str__(self):
         return (
             f'{self.ingredients.name} ({self.ingredients.measurement_unit})'
-            f'- {self.amount}'
+            f' - {self.amount}'
         )
 
 
-class Tags(models.Model):
+class Tag(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
@@ -133,46 +133,34 @@ class Tags(models.Model):
         return self.name
 
 
-class Favorites(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='favorites'
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name='favorites'
+    )
 
     class Meta:
-        default_related_name = 'favorites'
         verbose_name = 'избранный рецепт'
         verbose_name_plural = 'избранные рецепты'
         constraints = [
             UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='uq_user_recipe'
+                name='unique_user_recipe'
             )
         ]
 
     def __str__(self):
         return f'{self.user} добавил "{self.recipe}" в Избранное'
 
-    @classmethod
-    def add_favorite(cls, user, recipe):
-        favorite, created = cls.objects.get_or_create(user=user, recipe=recipe)
-        return favorite
-
-    @classmethod
-    def remove_favorite(cls, user, recipe):
-        cls.objects.filter(user=user, recipe=recipe).delete()
-
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="shopping_cart",
-        verbose_name="пользователь"
+        User, on_delete=models.CASCADE, related_name='shopping_carts'
     )
     recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='shopping_cart',
-        verbose_name="рецепт"
+        Recipe, on_delete=models.CASCADE, related_name='shopping_carts'
     )
 
     class Meta:
@@ -181,7 +169,7 @@ class ShoppingCart(models.Model):
         constraints = [
             UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='uq_user_reciepe'
+                name='uq_user_recipe'
             ),
             CheckConstraint(
                 check=~models.Q(user=models.F('recipe')),
@@ -189,5 +177,5 @@ class ShoppingCart(models.Model):
             )
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.user} добавил "{self.recipe}" в Список покупок'

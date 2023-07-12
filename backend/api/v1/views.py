@@ -11,7 +11,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 
 from recipes.models import (
-    Favorites, Ingredients, Recipe, RecipeIngredient, ShoppingCart, Tags
+    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
 )
 
 from .filters import IngredientFilter, RecipeFilter
@@ -27,8 +27,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """Вывод ингредиентов."""
 
     serializer_class = IngredientsSerializer
-    queryset = Ingredients.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    queryset = Ingredient.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly, )
     filter_backends = (IngredientFilter, )
     search_fields = ('^name', )
     pagination_class = None
@@ -36,7 +36,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TagViewSet(viewsets.ModelViewSet):
     """Вывод тегов."""
-    queryset = Tags.objects.all()
+
+    queryset = Tag.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
     pagination_class = None
@@ -44,11 +45,13 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """Работа с рецептами."""
-    queryset = Recipe.objects.all()
+
+    queryset = Recipe.objects.select_related(
+        'author').prefetch_related('tags', 'ingredients')
     serializer_class = CreateRecipeSerializer
-    permission_classes = (AuthorPermission)
+    permission_classes = (AuthorPermission, )
     pagination_class = CustomPagination
-    filter_backends = (DjangoFilterBackend)
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
@@ -122,7 +125,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @favorite.mapping.delete
     def destroy_favorite(self, request, pk):
         get_object_or_404(
-            Favorites,
+            Favorite,
             user=request.user,
             recipe=get_object_or_404(Recipe, id=pk)
         ).delete()

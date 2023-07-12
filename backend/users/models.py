@@ -6,6 +6,7 @@ from django.db.models import CheckConstraint, UniqueConstraint
 class User(AbstractUser):
 
     email = models.EmailField(
+        'Почта',
         max_length=254,
         unique=True,
     )

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (
-    Favorites, Ingredients, Recipe,
-    RecipeIngredient, ShoppingCart, Tags)
+    Favorite, Ingredient, Recipe,
+    RecipeIngredient, ShoppingCart, Tag)
 from .users.serializers import UserSerializer
 
 
@@ -10,7 +10,7 @@ class TagsSerializer(serializers.ModelSerializer):
     """Сериализатор тегов."""
 
     class Meta:
-        model = Tags
+        model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
 
@@ -18,7 +18,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
     """Сериализатор ингредиентов."""
 
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = ('id', 'name', 'measurement_unit', )
 
 
@@ -26,7 +26,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     """Сериализатор связи инредиента и рецепта."""
 
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredients.objects.all()
+        queryset=Ingredient.objects.all()
     )
     name = serializers.ReadOnlyField(
         source='ingredient.name'
@@ -46,7 +46,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagsSerializer(read_only=False, many=True)
     author = UserSerializer(read_only=True, many=False)
     ingredients = RecipeIngredientSerializer(
-        many=True, source='ingredienttorecipe'
+        many=True, source='ingredient_list'
     )
     is_favorite = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -56,7 +56,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id', 'tags', 'author', 'ingredients',
-            'is_favorited', 'is_shopping_cart', 'name',
+            'is_favorite', 'is_in_shopping_cart', 'name',
             'image', 'description', 'cooking_time'
         )
 
@@ -74,7 +74,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return obj.shopping_cart.filter(user=request.user).exist()
+        return obj.shopping_cart.filter(user=request.user).exists()
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
@@ -85,7 +85,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Tags.objects.all(),
+        queryset=Tag.objects.all(),
         error_messages={'does_not_exist': 'Данного тега не существует'}
     )
     image = Base64ImageField(max_length=None)
@@ -100,11 +100,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate_tags(self, tags):
-        for tag in tags:
-            if not Tags.objects.filter(id=tag.id).exists():
-                raise serializers.ValidationError(
-                    'Данного тега не существует'
-                )
+        non_existing_tags = tags.exclude(
+            id__in=Tag.objects.values_list('id', flat=True)
+        )
+        if non_existing_tags.exists():
+            raise serializers.ValidationError('Данного тега не существует')
         return tags
 
     def validate_coocking_time(self, coocking_time):
@@ -180,7 +180,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализатор избранного."""
 
     class Meta:
-        model = Favorites
+        model = Favorite
         fields = ('user', 'recipe')
 
     def validate(self, data):
