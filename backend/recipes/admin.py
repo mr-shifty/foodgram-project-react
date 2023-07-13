@@ -23,10 +23,12 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        queryset = queryset.select_related('author')
-        queryset = queryset.prefetch_related('ingredients', 'tags')
-        queryset = queryset.annotate(favorites_count=Count('favorites'))
+        queryset = (
+            super().get_queryset(request)
+            .select_related('author')
+            .prefetch_related('ingredients', 'tags')
+            .annotate(favorites_count=Count('favorites'))
+        )
         return queryset
 
     def get_favorites(self, obj):
@@ -59,6 +61,14 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
     list_filter = ('recipe', )
     empty_value_display = '-пусто-'
 
+    def get_queryset(self, request):
+        queryset = (
+            super().get_queryset(request)
+            .select_related('recipe')
+            .prefetch_related('ingredients')
+        )
+        return queryset
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -79,6 +89,13 @@ class FavoriteAdmin(admin.ModelAdmin):
     search_fields = ('user', 'recipe')
     empty_value_display = '-пусто-'
 
+    def get_queryset(self, request):
+        queryset = (
+            super().get_queryset(request)
+            .select_related('user', 'recipe')
+        )
+        return queryset
+
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
@@ -88,3 +105,10 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     list_filter = ('recipe', 'user')
     search_fields = ('user', )
     empty_value_display = '-пусто-'
+
+    def get_queryset(self, request):
+        queryset = (
+            super().get_queryset(request)
+            .select_related('user', 'recipe')
+        )
+        return queryset

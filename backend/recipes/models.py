@@ -135,10 +135,14 @@ class Tag(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='favorites'
+        User, on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='пользователь'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='favorites'
+        Recipe, on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='рецепт'
     )
 
     class Meta:
@@ -157,10 +161,14 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='shopping_carts'
+        User, on_delete=models.CASCADE,
+        related_name='shopping_carts',
+        verbose_name='пользователь'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='shopping_carts'
+        Recipe, on_delete=models.CASCADE,
+        related_name='shopping_carts',
+        verbose_name='рецепт'
     )
 
     class Meta:

@@ -11,7 +11,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 
 from recipes.models import (
-    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
+    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag,
 )
 
 from .filters import IngredientFilter, RecipeFilter
