@@ -17,6 +17,7 @@ jobs:
 
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
+    needs: linters
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -51,7 +52,7 @@ jobs:
           script: |
             cd foodgram
             sudo docker compose -f docker-compose.yml down
-            sudo docker compose -f docker-compose.production.yml pull
+            sudo docker compose -f docker-compose.yml pull
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -59,7 +60,7 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            sudo docker compose -f docker-compose.production.yml up -d
+            sudo docker compose -f docker-compose.yml up -d
             sudo docker image prune --all --force
 
   send_message:
