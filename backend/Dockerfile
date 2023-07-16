@@ -8,7 +8,6 @@ COPY entrypoint.sh /usr/bin/entrypoint.sh
 RUN apt-get update && apt-get upgrade -y && \
     pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir
 RUN chmod +x /usr/bin/entrypoint.sh
-RUN python manage.py collectstatic --noinput
 
 COPY . .
 

@@ -56,7 +56,7 @@ class IngredientAdmin(admin.ModelAdmin):
 class RecipeIngredientAdmin(admin.ModelAdmin):
     """ Админ панель управление рецепты и инредиенты. """
 
-    list_display = ('recipe', 'ingredients', 'amount',)
+    list_display = ('recipe', 'ingredient', 'amount',)
     search_fields = ('recipe', )
     list_filter = ('recipe', )
     empty_value_display = '-пусто-'
@@ -65,7 +65,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
         queryset = (
             super().get_queryset(request)
             .select_related('recipe')
-            .prefetch_related('ingredients')
+            .prefetch_related('ingredient')
         )
         return queryset
 
