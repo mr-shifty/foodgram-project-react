@@ -1,12 +1,5 @@
-import base64
-
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.response import Response
-
-from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
-
-from recipes.models import Ingredient, RecipeIngredient
 
 
 def create_model_instance(request, instance, serializer_name):
