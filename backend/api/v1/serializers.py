@@ -192,11 +192,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             context={'request': request}
         ).data
 
-    def to_representation(self, instance):
-        return RecipeReadSerializer(instance, context={
-            'request': self.context.get('request')
-        }).data
-
 
 class RecipeShortSerializer(serializers.ModelSerializer):
     """ Сериализатор полей избранных рецептов и покупок."""
