@@ -14,10 +14,10 @@ services:
       - .env
 
   backend:
-    build: ../backend/
+    image: mrshifty/foodgram_backend
     volumes:
-      - static:/static/
-      - media:/media/
+      - static:/app/static/
+      - media:/app/media/
     depends_on:
       - db
     env_file:

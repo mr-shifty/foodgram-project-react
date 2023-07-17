@@ -48,7 +48,6 @@ class IngredientAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'measurement_unit')
     search_fields = ('name', )
-    list_filter = ('name', )
     empty_value_display = '-пусто-'
 
 
@@ -58,7 +57,6 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
 
     list_display = ('recipe', 'ingredient', 'amount',)
     search_fields = ('recipe', )
-    list_filter = ('recipe', )
     empty_value_display = '-пусто-'
 
     def get_queryset(self, request):
@@ -76,7 +74,6 @@ class TagAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'color', 'slug')
     search_fields = ('name', 'slug')
-    list_filter = ('name', )
     empty_value_display = '-пусто-'
 
 
@@ -102,7 +99,6 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     """ Админ панель списка покупок. """
 
     list_display = ('recipe', 'user')
-    list_filter = ('recipe', 'user')
     search_fields = ('user', )
     empty_value_display = '-пусто-'
 

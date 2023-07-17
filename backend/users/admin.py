@@ -18,7 +18,6 @@ class UserAdmin(UserAdmin):
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     list_display = ('user', 'author',)
-    list_filter = ('user', 'author')
     search_fields = ('user', 'author')
     empty_value_display = '-пусто-'
 
