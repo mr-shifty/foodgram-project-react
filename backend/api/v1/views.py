@@ -10,6 +10,7 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 
+from api.v1.utils import create_model_instance, delete_model_instance
 from recipes.models import (
     Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag,
 )
@@ -21,7 +22,6 @@ from .serializers import (
     CreateRecipeSerializer, FavoriteSerializer, IngredientsSerializer,
     RecipeReadSerializer, ShoppingCartSerializer, TagsSerializer,
 )
-from api.v1.utils import create_model_instance, delete_model_instance
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
