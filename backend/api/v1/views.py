@@ -21,6 +21,7 @@ from .serializers import (
     CreateRecipeSerializer, FavoriteSerializer, IngredientsSerializer,
     RecipeReadSerializer, ShoppingCartSerializer, TagsSerializer,
 )
+from api.v1.utils import create_model_instance, delete_model_instance
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -108,25 +109,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=('POST',),
-        permission_classes=[IsAuthenticated])
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated, ]
+    )
     def favorite(self, request, pk):
-        context = {"request": request}
+        """Работа с избранными рецептами.
+        Удаление/добавление в избранное.
+        """
         recipe = get_object_or_404(Recipe, id=pk)
-        data = {
-            'user': request.user.id,
-            'recipe': recipe.id
-        }
-        serializer = FavoriteSerializer(data=data, context=context)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.method == 'POST':
+            return create_model_instance(request, recipe, FavoriteSerializer)
 
-    @favorite.mapping.delete
-    def destroy_favorite(self, request, pk):
-        get_object_or_404(
-            Favorite,
-            user=request.user,
-            recipe=get_object_or_404(Recipe, id=pk)
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.method == 'DELETE':
+            error_message = 'У вас нет этого рецепта в избранном'
+            return delete_model_instance(request, Favorite,
+                                         recipe, error_message)

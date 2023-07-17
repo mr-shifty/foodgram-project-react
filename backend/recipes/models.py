@@ -41,7 +41,7 @@ class Recipe(models.Model):
         null=True,
         default=None
     )
-    description = models.TextField(
+    text = models.TextField(
         verbose_name="описание"
     )
     ingredients = models.ManyToManyField(

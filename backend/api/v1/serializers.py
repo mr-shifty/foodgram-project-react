@@ -1,3 +1,4 @@
+from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -5,7 +6,9 @@ from recipes.models import (
     Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag,
 )
 
-from .users.serializers import UserSerializer
+from rest_framework.fields import SerializerMethodField
+# from .users.serializers import UserSerializer
+from users.models import User
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -70,11 +73,31 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
+class CustomUserSerializer(UserSerializer):
+    """Сериализатор кастомной модели пользователя."""
+
+    is_subscribed = SerializerMethodField(read_only=True)
+
+    class Meta:
+        abstract = True
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subscribed'
+        )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if self.context.get('request').user.is_anonymous:
+            return False
+        return obj.following.filter(user=request.user).exists()
+
+
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор просмотра рецептов."""
 
     tags = TagsSerializer(read_only=False, many=True)
-    author = UserSerializer(read_only=True, many=False)
+    author = CustomUserSerializer(read_only=True, many=False)
     ingredients = RecipeIngredientSerializer(
         many=True, source='ingredientstorecipe'
     )
@@ -87,7 +110,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'tags', 'author', 'ingredients',
             'is_favorite', 'is_in_shopping_cart', 'name',
-            'image', 'description', 'cooking_time'
+            'image', 'text', 'cooking_time'
         )
 
     def get_recipe(self, obj):
@@ -110,7 +133,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """ Сериализатор для создания рецепта """
     ingredients = RecipeIngredientSerializer(
-        many=True,
+        many=True
     )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -118,14 +141,14 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         error_messages={'does_not_exist': 'Указанного тега не существует'}
     )
     image = Base64ImageField(max_length=None)
-    author = UserSerializer(read_only=True)
+    author = CustomUserSerializer(read_only=True)
     cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = (
             'id', 'tags', 'author', 'ingredients',
-            'name', 'image', 'description', 'cooking_time',)
+            'name', 'image', 'text', 'cooking_time',)
 
     def validate_tags(self, tags):
         for tag in tags:
@@ -171,7 +194,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request', None)
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredient')
+        ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(author=request.user, **validated_data)
         recipe.tags.set(tags)
         self.create_ingredients(recipe, ingredients)
