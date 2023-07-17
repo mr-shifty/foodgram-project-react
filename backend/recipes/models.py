@@ -174,5 +174,5 @@ class ShoppingCart(FavoriteShoppingCart):
 
     class Meta(FavoriteShoppingCart.Meta):
         default_related_name = 'shopping_cart'
-        verbose_name = 'Корзина'
-        verbose_name_plural = 'Корзина'
+        verbose_name = 'cписок покупок'
+        verbose_name_plural = 'cписки покупок'
