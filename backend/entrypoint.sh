@@ -7,7 +7,7 @@ python manage.py migrate
 python manage.py import_csv
 
 # Сборка статики
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 # Запуск сервера
 exec "$@"
