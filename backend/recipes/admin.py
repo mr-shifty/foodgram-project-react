@@ -82,7 +82,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     """ Админ панель управление подписками. """
 
     list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
+    list_filter = ('user',)
     search_fields = ('user', 'recipe')
     empty_value_display = '-пусто-'
 
