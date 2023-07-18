@@ -10,7 +10,7 @@ class UserAdmin(UserAdmin):
         'username', 'email',
         'first_name', 'last_name', 'id',
     )
-    list_filter = ('email', 'username')
+    search_fields = ('email', 'username')
     ordering = ('username', )
     empty_value_display = '-пусто-'
 

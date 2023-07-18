@@ -11,4 +11,5 @@ RUN chmod +x /usr/bin/entrypoint.sh
 
 COPY . .
 
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0:8000" ]
