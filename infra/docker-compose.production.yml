@@ -22,6 +22,7 @@ services:
       - db
     env_file:
       - .env
+    entrypoint: /usr/bin/entrypoint.sh
     restart: always
     container_name: foodgram_backend
   
