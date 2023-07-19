@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.db.models import Count
 
 from django.shortcuts import get_object_or_404
 
@@ -46,7 +47,9 @@ class UserViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = User.objects.filter(following__user=user)
+        queryset = User.objects.filter(following__user=user).annotate(
+            recipes_count=Count('recipes')
+        )
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeListSerializer(
             pages, many=True, context={'request': request}
