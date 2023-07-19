@@ -4,17 +4,20 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404
 
 from users.models import Follow, User
 
 from ..pagination import CustomPagination
 from .serializers import CustomUserSerializer, SubscribeListSerializer
-from django.db.models import Count
 
 
 class UserViewSet(UserViewSet):
-    queryset = User.objects.all().annotate(Count('recipes'))
+    queryset = User.objects.all().select_related(
+        'following').prefetch_related(
+            'following__recipes').annotate(
+                recipes_count=Count('recipes'))
     serializer_class = CustomUserSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
     pagination_class = CustomPagination

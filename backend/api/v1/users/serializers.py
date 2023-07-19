@@ -9,7 +9,6 @@ from users.models import User
 
 from ..serializers import RecipeShortSerializer
 from .validators import validate_username_me
-from django.db.models import Count
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -58,9 +57,7 @@ class CustomUserSerializer(UserSerializer):
 
 class SubscribeListSerializer(CustomUserSerializer):
     """Сериализатор подписок."""
-    annotate_recipes_count = User.objects.annotate(
-        recipes_count=Count('recipes')
-    )
+
     recipes_count = serializers.SerializerMethodField()
     recipes = SerializerMethodField()
 
