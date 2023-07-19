@@ -58,7 +58,7 @@ class CustomUserSerializer(UserSerializer):
 class SubscribeListSerializer(CustomUserSerializer):
     """Сериализатор подписок."""
 
-    recipes_count = serializers.IntegerField()
+    recipes_count = serializers.SerializerMethodField()
     recipes = SerializerMethodField()
 
     class Meta(CustomUserSerializer.Meta):
@@ -85,6 +85,9 @@ class SubscribeListSerializer(CustomUserSerializer):
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
