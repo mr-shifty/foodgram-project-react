@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404
 from users.models import User
 
 from ..serializers import RecipeShortSerializer
-from .validators import username_me
+from .validators import validate_username_me
+from django.db.models import Count
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -32,7 +33,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             raise serializers.ValidationError(
                 'Пользователь с таким USERNAME уже существует'
             )
-        return username_me(value)
+        return validate_username_me(value)
 
 
 class CustomUserSerializer(UserSerializer):
@@ -57,8 +58,10 @@ class CustomUserSerializer(UserSerializer):
 
 class SubscribeListSerializer(CustomUserSerializer):
     """Сериализатор подписок."""
-
-    recipes_count = SerializerMethodField()
+    annotate_recipes_count = User.objects.annotate(
+        recipes_count=Count('recipes')
+    )
+    recipes_count = serializers.SerializerMethodField()
     recipes = SerializerMethodField()
 
     class Meta(CustomUserSerializer.Meta):

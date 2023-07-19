@@ -10,10 +10,11 @@ from users.models import Follow, User
 
 from ..pagination import CustomPagination
 from .serializers import CustomUserSerializer, SubscribeListSerializer
+from django.db.models import Count
 
 
 class UserViewSet(UserViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().annotate(Count('recipes'))
     serializer_class = CustomUserSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
     pagination_class = CustomPagination
@@ -37,7 +38,7 @@ class UserViewSet(UserViewSet):
             Follow.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == "DELETE":
+        if request.method == 'DELETE':
             get_object_or_404(
                 Follow, user=user, author=author
             ).delete()
