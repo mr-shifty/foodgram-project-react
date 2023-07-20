@@ -1,5 +1,8 @@
 ![example workflow](https://github.com/mr-shifty/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
+
+<img src="https://github.com/mr-shifty/foodgram-project-react/blob/master/backend/media/recipes/images/preview.png" alt="img" width="600" height='350'>
+
 ### Опиание проекта.
 Сайт Foodgram, «Продуктовый помощник». Это онлайн-сервис и API для него. На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
