@@ -48,7 +48,7 @@ class UserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user).annotate(
-            recipes_count=Count('follower__recipes')
+            recipes_count=Count('recipes')
         )
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeListSerializer(
